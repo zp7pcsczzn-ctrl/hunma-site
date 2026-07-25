@@ -3,23 +3,20 @@
 import { useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '../../../lib/useAuth';
-import {
-  chapters,
-  BOOK_TITLE,
-  BOOK_AUTHOR,
-  BOOK_PUBLISHER,
-} from '../../../lib/chapters';
+import { useAuth } from '../../../../lib/useAuth';
+import { books } from '../../../../lib/books';
 
 export default function ChapterPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const params = useParams();
 
-  const idx = chapters.findIndex((c) => c.id === params.id);
-  const chapter = chapters[idx];
-  const prev = chapters[idx - 1];
-  const next = chapters[idx + 1];
+  const book = books.find((b) => b.id === params.bookId);
+  const bookChapters = book ? book.chapters : [];
+  const idx = bookChapters.findIndex((c) => c.id === params.chapterId);
+  const chapter = bookChapters[idx];
+  const prev = bookChapters[idx - 1];
+  const next = bookChapters[idx + 1];
 
   useEffect(() => {
     if (!loading && !user) {
@@ -31,14 +28,14 @@ export default function ChapterPage() {
     return <div className="paper"><p className="center-note">불러오는 중...</p></div>;
   }
   if (!user) {
-    return <div className="paper"><p className="center-note">입교 후 열람 가능한 장입니다. 목차로 이동합니다...</p></div>;
+    return <div className="paper"><p className="center-note">입교 후 열람 가능한 장입니다. 서고로 이동합니다...</p></div>;
   }
-  if (!chapter) {
+  if (!book || !chapter) {
     return (
       <div className="paper">
         <p className="center-note">존재하지 않는 장입니다.</p>
         <p style={{ textAlign: 'center' }}>
-          <Link href="/">목차로 돌아가기</Link>
+          <Link href="/">서고로 돌아가기</Link>
         </p>
       </div>
     );
@@ -46,7 +43,7 @@ export default function ChapterPage() {
 
   return (
     <div className="paper">
-      <Link href="/" className="back-link">← 목차로 돌아가기</Link>
+      <Link href={`/book/${book.id}`} className="back-link">← 목차로 돌아가기</Link>
 
       <div className="frame">
         <div className="corner tl"></div>
@@ -54,7 +51,7 @@ export default function ChapterPage() {
         <div className="corner bl"></div>
         <div className="corner br"></div>
         <div className="frame-inner">
-          <p className="running-head">{BOOK_TITLE} · {chapter.label}</p>
+          <p className="running-head">{book.title} · {chapter.label}</p>
           <p className="ch-num">{chapter.cn}</p>
           <h2 className="ch-title">{chapter.title}</h2>
           {chapter.hanja && <p className="ch-hanja">{chapter.hanja}</p>}
@@ -67,19 +64,19 @@ export default function ChapterPage() {
 
           <p className="ch-end">— {chapter.label} 끝 —</p>
           <p className="colophon">
-            {BOOK_TITLE} · 지은이 {BOOK_AUTHOR} · 출판 {BOOK_PUBLISHER}
+            {book.title} · 지은이 {book.author} · 출판 {book.publisher}
           </p>
 
           <div className="ch-nav">
             {prev ? (
-              <Link href={`/chapter/${prev.id}`} className="btn ghost" style={{ textDecoration: 'none' }}>
+              <Link href={`/chapter/${book.id}/${prev.id}`} className="btn ghost" style={{ textDecoration: 'none' }}>
                 ← 이전 장
               </Link>
             ) : (
               <span className="btn ghost disabled-link">← 이전 장</span>
             )}
             {next ? (
-              <Link href={`/chapter/${next.id}`} className="btn ghost" style={{ textDecoration: 'none' }}>
+              <Link href={`/chapter/${book.id}/${next.id}`} className="btn ghost" style={{ textDecoration: 'none' }}>
                 다음 장 →
               </Link>
             ) : (
