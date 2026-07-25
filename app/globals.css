@@ -303,3 +303,102 @@ p.tech-p { text-align: center; font-family: 'Noto Sans KR', sans-serif; font-wei
   color: var(--ink-soft);
   padding: 60px 0;
 }
+/* ---------- 서고(표지 그리드) 화면 ---------- */
+.library {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 50px 20px 80px;
+}
+.library-header { text-align: center; margin-bottom: 40px; }
+.library-title {
+  font-family: 'Nanum Myeongjo', serif;
+  font-weight: 800;
+  font-size: 32px;
+  color: var(--seal-red);
+  margin: 6px 0 8px;
+  letter-spacing: 3px;
+}
+.library-sub { font-size: 13px; color: var(--ink-soft); margin: 0; }
+
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 26px;
+}
+.book-cover-card {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+}
+.book-cover-art {
+  aspect-ratio: 3 / 4;
+  border: 1px solid var(--border-dark);
+  background-size: cover;
+  background-position: center 20%;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .15s ease, transform .15s ease, opacity .15s ease;
+}
+.book-cover-art::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10,4,4,.85) 0%, rgba(10,4,4,.15) 45%, rgba(10,4,4,0) 65%);
+}
+.book-cover-art::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border: 0.5px solid rgba(243,234,212,.35);
+  pointer-events: none;
+  z-index: 2;
+}
+.book-cover-title-overlay {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 2;
+  font-family: 'Nanum Myeongjo', serif;
+  font-size: 19px;
+  font-weight: 800;
+  color: #f3ead4;
+  letter-spacing: 3px;
+  text-shadow: 0 1px 4px rgba(0,0,0,.6);
+}
+.book-cover-card:hover .book-cover-art { border-color: var(--seal-red); transform: translateY(-2px); }
+.book-cover-info { padding: 0 2px; }
+.book-cover-name {
+  font-family: 'Nanum Myeongjo', serif;
+  font-weight: 700;
+  font-size: 14px;
+  margin: 0 0 4px;
+  color: var(--ink);
+}
+.book-cover-tagline {
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin: 0;
+  line-height: 1.5;
+}
+.book-cover-lock {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  text-align: center;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #f3ead4;
+  background: rgba(122,31,31,.9);
+  padding: 5px 6px;
+  z-index: 3;
+}
+.book-cover-card.locked .book-cover-art { opacity: .5; filter: grayscale(.3); }
+.book-cover-card.locked .book-cover-title-overlay { display: none; }

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../lib/useAuth';
 import { supabase } from '../lib/supabaseClient';
-import { chapters, BOOK_TITLE, BOOK_HANJA } from '../lib/chapters';
+import { books } from '../lib/books';
 import AuthModal from './components/AuthModal';
 
 export default function HomePage() {
@@ -22,7 +22,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="paper">
+    <div className="library">
       <div className="top-account">
         {loading ? null : user ? (
           <>
@@ -34,41 +34,29 @@ export default function HomePage() {
         )}
       </div>
 
-      <div className="frame">
-        <div className="corner tl"></div>
-        <div className="corner tr"></div>
-        <div className="corner bl"></div>
-        <div className="corner br"></div>
-        <div className="frame-inner">
-          <p className="hanja-eyebrow">{BOOK_HANJA}</p>
-          <h1 className="book-title">{BOOK_TITLE}</h1>
-          <p className="book-tagline">— 정천마 분투기 —</p>
-          <hr className="rule" />
-          <p className="lede">
-            여의경(如意境)의 대마두이나, 실상은 매미 한 마리에도 무너지는 정천마의
-            찌질하고 웅장한 무림 분투기. 전체 내용은 무료 입교(회원가입) 후
-            열람하실 수 있습니다.
-          </p>
+      <div className="library-header">
+        <p className="hanja-eyebrow">武 林 書 庫</p>
+        <h1 className="library-title">무림서고</h1>
+        <p className="library-sub">읽고 싶은 서책을 골라주세요</p>
+      </div>
 
-          {!loading && !user && (
-            <div className="cta-wrap">
-              <button className="btn" onClick={() => openAuth('signup')}>
-                무료로 입교하기
-              </button>
-            </div>
-          )}
-
-          <div className="chapter-list">
-            {chapters.map((c) => (
-              <ChapterCard
-                key={c.id}
-                chapter={c}
-                unlocked={!!user}
-                onLockedClick={() => openAuth('signup')}
-              />
-            ))}
-          </div>
+      {!loading && !user && (
+        <div className="cta-wrap">
+          <button className="btn" onClick={() => openAuth('signup')}>
+            무료로 입교하기
+          </button>
         </div>
+      )}
+
+      <div className="book-grid">
+        {books.map((b) => (
+          <BookCover
+            key={b.id}
+            book={b}
+            unlocked={!!user}
+            onLockedClick={() => openAuth('signup')}
+          />
+        ))}
       </div>
 
       {authOpen && (
@@ -78,35 +66,38 @@ export default function HomePage() {
   );
 }
 
-function ChapterCard({ chapter, unlocked, onLockedClick }) {
+function BookCover({ book, unlocked, onLockedClick }) {
   const inner = (
     <>
-      <div className="chapter-num">{chapter.cn}</div>
-      <div className="chapter-meta">
-        <div className="chapter-title-row">
-          <p className="chapter-title">{chapter.title}</p>
-          {chapter.hanja && <span className="chapter-hanja">{chapter.hanja}</span>}
-        </div>
-        <p className="chapter-teaser">{chapter.teaser}</p>
+      <div
+        className="book-cover-art"
+        style={{ backgroundImage: `url(${book.cover})` }}
+      >
+        <span className="book-cover-title-overlay">{book.title}</span>
+        {!unlocked && <span className="book-cover-lock">입교 후 열람</span>}
       </div>
-      {unlocked ? (
-        <span className="unlock-badge">열람 가능</span>
-      ) : (
-        <span className="lock-badge">입교 후 열람</span>
-      )}
+      <div className="book-cover-info">
+        <p className="book-cover-name">{book.title}</p>
+        <p className="book-cover-tagline">{book.tagline}</p>
+      </div>
     </>
   );
 
   if (unlocked) {
     return (
-      <Link href={`/chapter/${chapter.id}`} className="chapter-card">
+      <Link href={`/book/${book.id}`} className={`book-cover-card`}>
         {inner}
       </Link>
     );
   }
 
   return (
-    <div className="chapter-card" onClick={onLockedClick} role="button" tabIndex={0}>
+    <div
+      className="book-cover-card locked"
+      onClick={onLockedClick}
+      role="button"
+      tabIndex={0}
+    >
       {inner}
     </div>
   );
