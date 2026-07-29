@@ -58,9 +58,9 @@ export default function ChapterPage() {
           {chapter.epigraph && <p className="epigraph">{chapter.epigraph}</p>}
           <hr className="rule" />
 
-          {chapter.paras.map(([kind, text], i) => (
-            <ParaLine key={i} kind={kind} text={text} />
-          ))}
+          {chapter.paras.map(([kind, text, extra], i) => (
+  <ParaLine key={i} kind={kind} text={text} extra={extra} />
+))}
 
           <p className="ch-end">— {chapter.label} 끝 —</p>
           <p className="colophon">
@@ -89,10 +89,18 @@ export default function ChapterPage() {
   );
 }
 
-function ParaLine({ kind, text }) {
+function ParaLine({ kind, text, extra }) {
   if (kind === 'body') return <p className="body-p">{text}</p>;
   if (kind === 'dialogue') return <p className="dialogue-p">{text}</p>;
   if (kind === 'sfx') return <p className="sfx-p">{text}</p>;
   if (kind === 'tech') return <p className="tech-p">{text}</p>;
+  if (kind === 'image') {
+    return (
+      <div className="chapter-photo-wrap">
+        <img src={text} alt="" className="chapter-photo" />
+        {extra && <p className="chapter-photo-caption">{extra}</p>}
+      </div>
+    );
+  }
   return null;
 }
